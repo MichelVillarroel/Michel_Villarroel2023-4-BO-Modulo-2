@@ -7,6 +7,7 @@ from game.components.spaceship import Spaceship
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()#inicia music
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -18,6 +19,8 @@ class Game:
         self.player = Spaceship()
 
     def run(self):
+        pygame.mixer.music.load("sounds/music.mp3")#cargar
+        pygame.mixer.music.play()#reproducir
         # Game loop: events - update - draw
         self.playing = True
         while self.playing:
