@@ -3,7 +3,7 @@ import random
 
 from pygame.sprite import Sprite
 
-from game.utils.constants import ENEMY_1, SCREEN_HEIGHT, SCREEN_WIDTH
+from game.utils.constants import ENEMY_1, ENEMY_2, SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 class Enemy(Sprite):
@@ -16,7 +16,7 @@ class Enemy(Sprite):
     SHIP_HEIGHT = 60
 
     def __init__(self):
-        self.image = ENEMY_1
+        self.image = random.choice([ENEMY_1, ENEMY_2])###
         self.image = pygame.transform.scale(self.image, (self.SHIP_WIDTH, self.SHIP_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect.x = self.X_POS_LIST[random.randint(0, 10)]
@@ -26,15 +26,20 @@ class Enemy(Sprite):
         self.movement_x = self.MOV_X[random.randint(0, 1)]
         self.move_x_for = random.randint(30, 100)
         self.index = 0
+        self.erratic_movement = False ##
+        self.erratic_movement_frames = 0 ##
 
     def update(self, ships):
         self.rect.y += self.speed_y
-    
-        if self.movement_x == "left":
-           self.rect.x -= self.speed_x 
+
+        if self.erratic_movement:###
+            self.move_erratically()###
         else:
-           self.rect.x += self.speed_x
-        self.change_movement_x()
+            if self.movement_x == "left":
+                self.rect.x -= self.speed_x 
+            else:
+                self.rect.x += self.speed_x
+            self.change_movement_x()
 
         if self.rect.y >= SCREEN_HEIGHT:
            ships.remove(self)
@@ -50,3 +55,20 @@ class Enemy(Sprite):
         elif (self.index >= self.move_x_for and self.movement_x == "left") or (self.rect.x <= 10):
             self.movement_x = "right"
             self.index = 0
+
+    def move_erratically(self):
+        if self.erratic_movement_frames > 0:
+            self.rect.x += random.randint(-5, 5)
+            self.rect.y += random.randint(-5, 5)
+            self.erratic_movement_frames -= 1
+        else:
+            self.erratic_movement = False
+            if self.movement_x == "left":
+                self.rect.x -= self.speed_x
+            else:
+                self.rect.x += self.speed_x
+            self.change_movement_x()
+
+    def start_erratic_movement(self, frames):
+        self.erratic_movement = True
+        self.erratic_movement_frames = frames
