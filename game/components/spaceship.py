@@ -16,7 +16,7 @@ class Spaceship(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.X_POS
         self.rect.y = self.Y_POS
-        self.direction = 1  #almacenar direccion,1indica direcion inicial
+        self.direction = 1  #almacenar direccion
 
     def update(self, user_input):
       if user_input[pygame.K_LEFT]:
@@ -53,6 +53,6 @@ class Spaceship(Sprite):
     def draw(self, screen):
       if self.direction == 1:
           screen.blit(self.image, (self.rect.x, self.rect.y))
-      else:                            #voltea la imagen antes de dibujar
+      else:                            #voltea la imagen antes draw
         flipped_image = pygame.transform.flip(self.image, True, False)
         screen.blit(flipped_image, (self.rect.x, self.rect.y))
