@@ -4,6 +4,7 @@ import random
 from pygame.sprite import Sprite
 
 from game.utils.constants import ENEMY_1, ENEMY_2, SCREEN_HEIGHT, SCREEN_WIDTH
+from game.components.bullets.bullet import Bullet
 
 
 class Enemy(Sprite):
@@ -15,8 +16,10 @@ class Enemy(Sprite):
     SHIP_WIDTH = 40
     SHIP_HEIGHT = 60
 
+
     def __init__(self):
-        self.image = random.choice([ENEMY_1, ENEMY_2])###
+
+        self.image = random.choice([ENEMY_1, ENEMY_2])#
         self.image = pygame.transform.scale(self.image, (self.SHIP_WIDTH, self.SHIP_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect.x = self.X_POS_LIST[random.randint(0, 10)]
@@ -28,9 +31,18 @@ class Enemy(Sprite):
         self.index = 0
         self.erratic_movement = False ##
         self.erratic_movement_frames = 0 ##
+        self.type = "enemy"
+        self.shooting_time = random.randint(30, 50)
+        
 
-    def update(self, ships):
+        if self.image == ENEMY_2:
+            self.erratic_movement = True
+        else:
+            self.erratic_movement = False
+
+    def update(self, ships, game):
         self.rect.y += self.speed_y
+        self.shoot(game.bullet_manager)
 
         if self.erratic_movement:###
             self.move_erratically()###
@@ -72,3 +84,10 @@ class Enemy(Sprite):
     def start_erratic_movement(self, frames):
         self.erratic_movement = True
         self.erratic_movement_frames = frames
+
+    def shoot(self, bullet_manager):
+        current_time = pygame.time.get_ticks() 
+        if self.shooting_time <= current_time:
+            bullet = Bullet(self)   
+            bullet_manager.add_bullet(bullet) 
+            self.shooting_time += random.randint(30, 50)

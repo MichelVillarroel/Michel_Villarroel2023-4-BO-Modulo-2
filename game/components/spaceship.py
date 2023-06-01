@@ -17,6 +17,7 @@ class Spaceship(Sprite):
         self.rect.x = self.X_POS
         self.rect.y = self.Y_POS
         self.direction = 1  #almacenar direccion
+        self.type = "player"
 
     def update(self, user_input):
       if user_input[pygame.K_LEFT]:
