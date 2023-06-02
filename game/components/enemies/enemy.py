@@ -22,7 +22,7 @@ class Enemy(Sprite):
         self.image = random.choice([ENEMY_1, ENEMY_2])#
         self.image = pygame.transform.scale(self.image, (self.SHIP_WIDTH, self.SHIP_HEIGHT))
         self.rect = self.image.get_rect()
-        self.rect.x = self.X_POS_LIST[random.randint(0, 10)]
+        self.rect.x = self.X_POS_LIST[random.randint(0, 9)]
         self.rect.y = self.Y_POS
         self.speed_y = self.SPEED_Y
         self.speed_x = self.SPEED_X

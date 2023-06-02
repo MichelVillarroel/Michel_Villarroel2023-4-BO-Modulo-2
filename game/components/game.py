@@ -1,6 +1,6 @@
 import pygame
 
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, FONT_STYLE
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, FONT_STYLE, GAME_OVER
 
 from game.components.spaceship import Spaceship
 from game.components.enemies.enemy_manager import EnemyManager
@@ -22,6 +22,7 @@ class Game:
         self.y_pos_bg = 0
         self.death_count = 0
         self.score = 0
+        self.score_highest = 0
         self.player = Spaceship()
         self.enemy_manager = EnemyManager()  
         self.bullet_manager = BulletManager()
@@ -87,15 +88,29 @@ class Game:
         half_screen_height = SCREEN_HEIGHT // 2
 
         self.menu.reset_screen_color(self.screen)
+        self.print_menu_elements(self.death_count)
 
-        if self.death_count >0 :
-            self.menu.update_message('New Message')
 
         icon = pygame.transform.scale(ICON, (80, 120))
         self.screen.blit(icon, (half_screen_width -50, half_screen_height -150))
 
+        if self.death_count >0 :
+
+          game_over = pygame.transform.scale(GAME_OVER, (300, 150))
+          self.screen.blit(game_over, (half_screen_width -150, half_screen_height -250))
+
         self.menu.draw(self.screen)
         self.menu.update(self)
+
+    def print_menu_elements(self, death_count):
+        if self.score > self.score_highest:
+            self.score_highest = self.score
+        if self.death_count >0 :
+            puntaje = 'Your Score: ' + str(self.score)
+            muerto = 'Total Deaths: ' + str(self.death_count) 
+            titulo = 'Press any key to restart ' 
+            puntaje_alto = "Highest Score: " + str(self.score_highest)
+            self.menu.update_message(titulo, puntaje, puntaje_alto, muerto, rect_x = SCREEN_WIDTH  , rect_y = SCREEN_HEIGHT )#
 
     def update_score(self):
         self.score += 1

@@ -3,7 +3,7 @@ import pygame
 from game.utils.constants import FONT_STYLE, SCREEN_HEIGHT, SCREEN_WIDTH
 
 
-class Menu:
+class Menu:  
     HALF_SCREEN_HEIGHT = SCREEN_HEIGHT // 2
     HALF_SCREEN_WIDTH = SCREEN_WIDTH //2 
 
@@ -14,12 +14,27 @@ class Menu:
       self.text_rect = self.text.get_rect()
       self.text_rect.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)
 
+      self.text0 = self.font.render(message, True, (0, 0, 0))
+      self.text_rect0 = self.text0.get_rect()
+      self.text_rect0.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)
+
+      self.text1 = self.font.render(message, True, (0, 0, 0))
+      self.text_rect1 = self.text1.get_rect()
+      self.text_rect1.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)
+
+      self.text2 = self.font.render(message, True, (0, 0, 0))
+      self.text_rect2 = self.text2.get_rect()
+      self.text_rect2.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)
+
     def update(self, game):
        pygame.display.update()
        self.handle_events_on_menu(game)
 
     def draw(self, screen):
        screen.blit(self.text, self.text_rect)
+       screen.blit(self.text0, self.text_rect0)
+       screen.blit(self.text1, self.text_rect1)
+       screen.blit(self.text2, self.text_rect2)
 
     def handle_events_on_menu(self, game):
        for event in pygame.event.get():
@@ -32,7 +47,19 @@ class Menu:
     def reset_screen_color(self, screen):
        screen.fill((255, 255, 255))
 
-    def update_message(self, message):
-       self.text = self.font.render(message, True, (0, 0, 0))
+    def update_message(self, message, message1, message2, message3, rect_x, rect_y):
+       self.text = self.font.render(message, True, (91, 0, 100))
        self.text_rect = self.text.get_rect()
-       self.text_rect.center = (self.HALF_SCREEN_WIDTH, self.HALF_SCREEN_HEIGHT)
+       self.text_rect.center = (rect_x // 2, rect_y // 2)#cordenada
+
+       self.text0 = self.font.render(message1, True, (73, 24, 220))
+       self.text_rect0 = self.text0.get_rect()
+       self.text_rect0.center = (rect_x // 2, 5*rect_y //8)#cordenada
+
+       self.text1 = self.font.render(message2, True, (100, 0, 0))
+       self.text_rect1 = self.text1.get_rect()
+       self.text_rect1.center = (rect_x // 2, 3*rect_y // 4)#cordenada
+
+       self.text2 = self.font.render(message3, True, (255, 0, 0))
+       self.text_rect2 = self.text2.get_rect()
+       self.text_rect2.center = (rect_x // 2, 7*rect_y // 8)
