@@ -1,6 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 from game.utils.constants import SPACESHIP, SCREEN_WIDTH, SCREEN_HEIGHT
+from game.components.bullets.bullet import Bullet
 
 class Spaceship(Sprite):
 
@@ -19,7 +20,7 @@ class Spaceship(Sprite):
         self.direction = 1  #almacenar direccion
         self.type = "player"
 
-    def update(self, user_input):
+    def update(self, user_input, game):
       if user_input[pygame.K_LEFT]:
         self.move_left()
       elif user_input[pygame.K_RIGHT]:
@@ -28,6 +29,8 @@ class Spaceship(Sprite):
         self.move_up()
       elif user_input[pygame.K_DOWN]:
         self.move_down()
+      elif user_input[pygame.K_a]:
+        self.shoot(game)
 
     def move_left(self):
         if self.rect.left > 0:
@@ -57,3 +60,7 @@ class Spaceship(Sprite):
       else:                            #voltea la imagen antes draw
         flipped_image = pygame.transform.flip(self.image, True, False)
         screen.blit(flipped_image, (self.rect.x, self.rect.y))
+
+    def shoot(self, game):
+      bullet = Bullet(self)
+      game.bullet_manager.add_bullet(bullet)
