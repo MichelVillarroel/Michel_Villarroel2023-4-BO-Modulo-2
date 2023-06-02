@@ -19,4 +19,8 @@ class EnemyManager:
         if len(self.enemies) < 4:##
             enemy = Enemy()
             self.enemies.append(enemy)
+
+    def reset(self):
+        self.bullets =[]
+        self.enemy_bullets = []
             
