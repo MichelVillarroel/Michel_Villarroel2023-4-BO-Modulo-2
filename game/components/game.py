@@ -5,7 +5,10 @@ from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, F
 from game.components.spaceship import Spaceship
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
+from game.components.power_ups.power_up_manager import PowerUpManager
 from game.components.menu import Menu
+
+
 
 class Game:
     def __init__(self):
@@ -26,8 +29,9 @@ class Game:
         self.player = Spaceship()
         self.enemy_manager = EnemyManager()  
         self.bullet_manager = BulletManager()
+        self.power_up_manager = PowerUpManager()
         self.menu = Menu('Press any button to start....', self.screen)
-
+        
     def execute(self):
         self.running = True
         while self.running:
@@ -61,6 +65,7 @@ class Game:
         self.player.update(user_input, self)
         self.enemy_manager.update(self) 
         self.bullet_manager.update(self)
+        self.power_up_manager.update(self)
 
     def draw(self):
         self.clock.tick(FPS)
@@ -69,6 +74,8 @@ class Game:
         self.player.draw(self.screen)
         self.enemy_manager.draw(self.screen)
         self.bullet_manager.draw(self.screen)
+        self.power_up_manager.draw(self.screen)
+        self.draw_power_up_time()
         self.draw_score()
         pygame.display.update()
     #    pygame.display.flip()
@@ -121,3 +128,20 @@ class Game:
         text_rect = text.get_rect()
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
+
+    def reset_all(self):
+        self.score = 0
+        self.enemy_manager.reset()
+        self.bullet_manager.reset()
+        self.player.reset()
+        self.power_up_manager.reset()
+
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_time_up - pygame.time.get_ticks()) / 1000, 2)
+            if time_to_show >= 0:
+                self.menu.draw_shield(self.screen, f'{self.player.power_up_type.capitalize()} is enabled for {time_to_show} seconds')
+            else:
+                self.player.has_power_up = False
+                self.player.power_up_type = DEFAULT_TYPE
+                self.player.set_image()

@@ -36,6 +36,12 @@ class Menu:
        screen.blit(self.text1, self.text_rect1)
        screen.blit(self.text2, self.text_rect2)
 
+    def draw_shield(self, screen, message, x = 550, y = 50, color = (255, 255, 255)):
+        text = self.font.render(message, True, color)
+        text_rect = text.get_rect()
+        text_rect.center = (x, y)
+        screen.blit(text, text_rect)
+
     def handle_events_on_menu(self, game):
        for event in pygame.event.get():
           if event.type == pygame.QUIT:
