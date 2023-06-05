@@ -23,30 +23,31 @@ class Spaceship(Sprite):
         self.power_up_type = DEFAULT_TYPE
         self.has_power_up = False
         self.power_time_up = 0
+        self.lives = 0  # atributo para almacenar vidas 
 
     def update(self, user_input, game):
       if user_input[pygame.K_LEFT]:
         self.move_left()
-      elif user_input[pygame.K_RIGHT]:
+      if user_input[pygame.K_RIGHT]:
         self.move_rigth()
-      elif user_input[pygame.K_UP]:
+      if user_input[pygame.K_UP]:
         self.move_up()
-      elif user_input[pygame.K_DOWN]:
+      if user_input[pygame.K_DOWN]:
         self.move_down()
-      elif user_input[pygame.K_a]:
+      if user_input[pygame.K_SPACE]:
         self.shoot(game)
 
     def move_left(self):
         if self.rect.left > 0:
           self.rect.x -= self.SHIP_SPEED
-        else:                      #cambia la direcion
+        else:                      
           self.rect.x = SCREEN_WIDTH - self.SHIP_WIDTH
           self.direction = -1
 
     def move_rigth(self):
         if self.rect.right < SCREEN_WIDTH:
           self.rect.x += self.SHIP_SPEED
-        else:                       #mueve la direcion a la derecha
+        else:                       
           self.rect.x = 0
           self.direction = 1 
 
@@ -77,3 +78,12 @@ class Spaceship(Sprite):
     def set_image(self, size = (SHIP_WIDTH, SHIP_HEIGHT), image = SPACESHIP):
         self.image = image
         self.image = pygame.transform.scale(self.image, size)
+
+    def add_lives(self):#aumenta heart
+        self.lives += 1
+
+    def get_lives(self):#obtener valor heart
+        return self.lives
+
+    def reduce_lives(self):#reduce heart
+        self.lives -= 1

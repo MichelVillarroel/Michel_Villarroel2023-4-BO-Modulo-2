@@ -1,12 +1,14 @@
 import pygame
 
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, FONT_STYLE, GAME_OVER
+import random
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, ROCK_1, ROCK_2, ROCK_3, ROCK_4, TITLE, FPS, DEFAULT_TYPE, FONT_STYLE, GAME_OVER, SCREEN_WIDTH
 
 from game.components.spaceship import Spaceship
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
 from game.components.power_ups.power_up_manager import PowerUpManager
 from game.components.menu import Menu
+from game.components.rocks import Rock
 
 
 
@@ -16,6 +18,7 @@ class Game:
         pygame.mixer.init()#inicia music
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
+        self.list_roca = []
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.playing = False
@@ -31,6 +34,7 @@ class Game:
         self.bullet_manager = BulletManager()
         self.power_up_manager = PowerUpManager()
         self.menu = Menu('Press any button to start....', self.screen)
+        self.lives = 0# Añadir atributo para almacenar las vidas del jugador
         
     def execute(self):
         self.running = True
@@ -46,12 +50,13 @@ class Game:
         self.bullet_manager.reset()
         pygame.mixer.music.load("sounds/music.mp3")#cargar
         pygame.mixer.music.play()#reproducir
-        # Game loop: events - update - draw
+        self.reset()
         self.playing = True
         while self.playing:
             self.events()
             self.update()
             self.draw()
+            self.lives = self.player.lives  # Actualizar el contador de vidas del jugador
        # pygame.display.quit()
         #pygame.quit()
 
@@ -62,6 +67,7 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
+        self.update_rock()#atualizar rocas
         self.player.update(user_input, self)
         self.enemy_manager.update(self) 
         self.bullet_manager.update(self)
@@ -71,6 +77,7 @@ class Game:
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
+        self.draw_rock()#dibjar rocas
         self.player.draw(self.screen)
         self.enemy_manager.draw(self.screen)
         self.bullet_manager.draw(self.screen)
@@ -78,7 +85,7 @@ class Game:
         self.draw_power_up_time()
         self.draw_score()
         pygame.display.update()
-    #    pygame.display.flip()
+        #pygame.display.flip()
 
     def draw_background(self):
         image = pygame.transform.scale(BG, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -101,7 +108,7 @@ class Game:
         icon = pygame.transform.scale(ICON, (80, 120))
         self.screen.blit(icon, (half_screen_width -50, half_screen_height -150))
 
-        if self.death_count >0 :
+        if self.death_count > 0 :
 
           game_over = pygame.transform.scale(GAME_OVER, (300, 150))
           self.screen.blit(game_over, (half_screen_width -150, half_screen_height -250))
@@ -129,19 +136,48 @@ class Game:
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
 
-    def reset_all(self):
+        lives_text = font.render(f'HEART: {self.player.lives}', True, (255, 255, 255))
+        lives_rect = lives_text.get_rect()
+        lives_rect.topleft = (20, 20)
+        self.screen.blit(lives_text, lives_rect)
+
+    def reset(self):
         self.score = 0
         self.enemy_manager.reset()
         self.bullet_manager.reset()
         self.player.reset()
         self.power_up_manager.reset()
+        self.lives = self.player.lives
 
     def draw_power_up_time(self):
         if self.player.has_power_up:
-            time_to_show = round((self.player.power_time_up - pygame.time.get_ticks()) / 1000, 2)
+            time_to_show = round((self.player.power_time_up - pygame.time.get_ticks())/1000, 2)
+
             if time_to_show >= 0:
                 self.menu.draw_shield(self.screen, f'{self.player.power_up_type.capitalize()} is enabled for {time_to_show} seconds')
             else:
                 self.player.has_power_up = False
                 self.player.power_up_type = DEFAULT_TYPE
                 self.player.set_image()
+    def update_rock(self):
+        for rocas_time in self.list_roca:
+            rock_time = 5
+            rocas_time.set_y(rocas_time.get_y() + rock_time)
+
+        for rocas in self.list_roca:
+            if rocas.get_y() > SCREEN_HEIGHT:
+                self.list_roca.remove(rocas)
+        if len(self.list_roca) == 0:
+            roca_num = random.randint(5, 8) 
+
+            rock_images = [ROCK_1, ROCK_2, ROCK_3, ROCK_4]
+            for _ in range(roca_num):
+                rock_number = random.randint(0, 3)
+                rock_x = random.randint(0, SCREEN_WIDTH - rock_images[rock_number].get_width())
+                rock_y = random.randint( 0 - SCREEN_HEIGHT // 2, 0 - rock_images[rock_number].get_height() )
+                roca_created = Rock(rock_images[rock_number], rock_x, rock_y)
+                self.list_roca.append(roca_created)
+
+    def draw_rock(self):
+        for rock_d in self.list_roca:
+            self.screen.blit(rock_d.get_image(), (rock_d.get_x(), rock_d.get_y()))
